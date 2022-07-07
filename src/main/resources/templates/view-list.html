@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reservation List</title>
+</head>
+<body>
+<button><a href="/reservation/new">예약 생성</a></button>
+
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script>
+    $.ajax({
+        url: "/reservation/list",
+        type: 'GET',
+        dateType: 'json',
+        contentType: 'application/json',
+        success: function (json) {
+            console.log(json);
+            $.each(json, function (key, value) {
+                console.log(json[key]);
+            });
+        }
+    });
+</script>
+</body>
+</html>
