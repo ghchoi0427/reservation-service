@@ -23,7 +23,7 @@ public class HomeController {
     @GetMapping()
     public String home(@CookieValue(name = "memberId", required = false) String userId) {
         if (userId == null) {
-            return "redirect:/home/login";
+            //return "redirect:/home/login";
         }
         return "home";
     }
