@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reservation</title>
+</head>
+<body>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script>
+    var cookieValue = null;
+    if (document.cookie) {
+        var array = document.cookie.split((escape("reservationDate") + '='));
+        if (array.length >= 2) {
+            var arraySub = array[1].split(';');
+            cookieValue = unescape(arraySub[0]);
+        }
+    }
+    let resDate = cookieValue;
+</script>
+<script>
+    $.ajax({
+        url: "/reservation/" + resDate,
+        type: 'GET',
+        dateType: 'json',
+        contentType: 'application/json',
+        success: function (json) {
+            $.each(json, function (k, v) {
+                let container = document.createElement("div");
+                let data = document.createElement("p");
+                data.innerHTML = dataFormat(json[k]);
+                container.append(data);
+                document.body.appendChild(container);
+
+                // let container = document.createElement("div")
+                // let username = document.createElement("user-name").innerHTML = json[k].userName;
+                // let date = document.createElement("res-date").innerHTML = json[k].date;
+                // let month = document.createElement("res-month").innerHTML = json[k].month;
+                // let start = document.createElement("res-start").innerHTML = json[k].startTime;
+                // let end = document.createElement("res-end").innerHTML = json[k].endTime;
+                // container.append(username, date, month, start, end);
+                // document.body.appendChild(container);
+            });
+        }
+    });
+</script>
+<script>
+    function dataFormat(json) {
+        let output = "";
+        let date = json.startTime.split("T").at(0)
+        let startTime = json.startTime.split("T").at(1)
+        let endTime = json.endTime.split("T").at(1)
+
+        output += json.userName + "\n";
+        output += date + "\n";
+        output += startTime + "\n";
+        output += endTime + "\n";
+
+        return output;
+    }
+</script>
+</body>
+</html>

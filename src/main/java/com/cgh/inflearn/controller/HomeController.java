@@ -54,7 +54,6 @@ public class HomeController {
 
     @PostMapping("/signup")
     public String register(MemberLoginDto dto, HttpServletResponse response) {
-        System.out.println(dto.getUsername() + dto.getUserPassword());
         Member member = new Member(dto.getUsername(), dto.getUserPassword());
         if (memberService.userNameAlreadyExists(dto.getUsername())) {
             return "redirect:/home/signup";

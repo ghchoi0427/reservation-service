@@ -11,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,14 +35,13 @@ public class ReservationController {
             int year = Integer.parseInt(reservation.getStartTime().toLocalDate().toString().split("-")[0]);
             int month = Integer.parseInt(reservation.getStartTime().toLocalDate().toString().split("-")[1]);
             int date = Integer.parseInt(reservation.getStartTime().toLocalDate().toString().split("-")[2]);
-
             ViewReservationDto dto = new ViewReservationDto();
-            System.out.println(memberService.findById(reservation.getUserId()));
 
             dto.setUserName(memberService.findById(reservation.getUserId()).getName());
             dto.setDate(date);
             dto.setMonth(month);
             dto.setYear(year);
+            dto.setReservationId(reservation.getId().toString());
 
             dto.setStartTime(reservation.getStartTime().toString());
             dto.setEndTime(reservation.getEndTime().toString());
@@ -69,20 +71,64 @@ public class ReservationController {
         return "redirect:/reservation/view-list";
     }
 
-    @GetMapping("/{reservationId}")
-    public ResponseEntity<ReservationDto> reservationDetail(@PathVariable UUID reservationId) {
-        Reservation reservation = reservationService.findReservation(reservationId);
-        ReservationDto dto = new ReservationDto();
-        dto.setUserId(reservation.getUserId().toString());
-        dto.setStartTime(reservation.getStartTime().toString());
-        dto.setEndTime(reservation.getEndTime().toString());
+    @GetMapping("/{reservationDate}")
+    public ResponseEntity<List<ViewReservationDto>> reservationDetailByDate(@PathVariable String reservationDate) {
+        int year = Integer.parseInt(reservationDate.split("-")[0]);
+        int month = Integer.parseInt(reservationDate.split("-")[1]);
+        int day = Integer.parseInt(reservationDate.split("-")[2]);
+        List<Reservation> reservations = reservationService.findReservationByDate(LocalDate.of(year, month, day));
+        List<ViewReservationDto> dtos = new ArrayList<>();
+        for (Reservation reservation : reservations) {
+            ViewReservationDto dto = new ViewReservationDto();
+            String username = memberService.findById(reservation.getUserId()).getName();
+            dto.setUserName(username);
+            dto.setDate(reservation.getStartTime().toLocalDate().getDayOfMonth());
+            dto.setMonth(reservation.getStartTime().getMonthValue());
+            dto.setYear(reservation.getStartTime().getYear());
+            dto.setStartTime(reservation.getStartTime().toString());
+            dto.setEndTime(reservation.getEndTime().toString());
+            dtos.add(dto);
+        }
 
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
+    @GetMapping("/{reservationDate}/detail")
+    public String viewReservationDetailByDate(@PathVariable String reservationDate, HttpServletResponse response) {
+        Cookie resCookie = new Cookie("reservationDate", reservationDate);
+        resCookie.setPath("/");
+        response.addCookie(resCookie);
+        return "reservation-detail";
+    }
+
+//    @GetMapping("/{reservationId}")
+//    public ResponseEntity<ViewReservationDto> reservationDetail(@PathVariable UUID reservationId) {
+//        Reservation reservation = reservationService.findReservation(reservationId);
+//        ViewReservationDto dto = new ViewReservationDto();
+//        String username = memberService.findById(reservation.getUserId()).getName();
+//        dto.setUserName(username);
+//        dto.setDate(reservation.getStartTime().toLocalDate().getDayOfMonth());
+//        dto.setMonth(reservation.getStartTime().getMonthValue());
+//        dto.setYear(reservation.getStartTime().getYear());
+//        dto.setStartTime(reservation.getStartTime().toString());
+//        dto.setEndTime(reservation.getEndTime().toString());
+//
+//        return new ResponseEntity<>(dto, HttpStatus.OK);
+//    }
+//
+//    @GetMapping("/{reservationId}/detail")
+//    public String viewReservationDetail(@PathVariable UUID reservationId, HttpServletResponse response) {
+//        Cookie resCookie = new Cookie("reservationId", reservationId.toString());
+//        resCookie.setPath("/");
+//        response.addCookie(resCookie);
+//
+//        return "reservation-detail";
+//    }
+
     @DeleteMapping("/{reservationId}")
-    public String delete(@PathVariable UUID reservationId) {
-        reservationService.delete(reservationId);
+    public String delete(@PathVariable String reservationId) {
+
+        reservationService.delete(UUID.fromString(reservationId));
         return "redirect:/reservation/list";
     }
 

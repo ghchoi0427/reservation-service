@@ -1,9 +1,12 @@
 package com.cgh.inflearn.repository;
 
 import com.cgh.inflearn.domain.Member;
+import com.cgh.inflearn.domain.Reservation;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 

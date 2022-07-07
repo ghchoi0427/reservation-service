@@ -5,6 +5,7 @@ import com.cgh.inflearn.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,5 +33,10 @@ public class ReservationServiceImpl implements ReservationService{
     @Override
     public void delete(UUID uuid) {
         repository.delete(uuid);
+    }
+
+    @Override
+    public List<Reservation> findReservationByDate(LocalDate date) {
+        return repository.findByDate(date);
     }
 }

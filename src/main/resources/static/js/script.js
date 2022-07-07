@@ -73,7 +73,6 @@ function jump() {
 }
 
 function showCalendar(month, year) {
-
     var firstDay = ( new Date( year, month ) ).getDay();
 
     tbl = document.getElementById("calendar-body");
