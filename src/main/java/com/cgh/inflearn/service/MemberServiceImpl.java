@@ -5,6 +5,8 @@ import com.cgh.inflearn.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -29,12 +31,12 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Member findByName(String name) {
+    public Optional<Member> findByName(String name) {
         return memberRepository.findByName(name);
     }
 
     @Override
-    public boolean userNameAlreadyExists(String name) {
+    public boolean userNameAlreadyExists(String name) throws NoSuchElementException {
         return memberRepository.nameExists(name);
     }
 

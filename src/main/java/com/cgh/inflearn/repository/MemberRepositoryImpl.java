@@ -1,14 +1,9 @@
 package com.cgh.inflearn.repository;
 
 import com.cgh.inflearn.domain.Member;
-import com.cgh.inflearn.domain.Reservation;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Repository
 public class MemberRepositoryImpl implements MemberRepository {
@@ -27,12 +22,17 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public Member findByName(String name) {
-        return map.values().stream().filter(member -> member.getName().equals(name)).findFirst().get();
+    public Optional<Member> findByName(String name) {
+        return map.values().stream().filter(member -> Objects.equals(member.getName(), name)).findFirst();
     }
 
     @Override
     public boolean nameExists(String name) {
-        return map.values().stream().anyMatch(e -> e.getName().equals(name));
+        return map.values().stream().anyMatch(e -> Objects.equals(e.getName(), name));
+    }
+
+    @Override
+    public List<Member> findAll() {
+        return new ArrayList<>(map.values());
     }
 }

@@ -2,6 +2,7 @@ package com.cgh.inflearn.service;
 
 import com.cgh.inflearn.domain.Member;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface MemberService {
@@ -12,7 +13,7 @@ public interface MemberService {
 
     Member findById(UUID memberId);
 
-    Member findByName(String name);
+    Optional<Member> findByName(String name);
 
     boolean userNameAlreadyExists(String name);
 }
