@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class MemberLoginDto {
 
-    private String username;
+    private String userName;
     private String userPassword;
 }
