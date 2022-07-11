@@ -6,7 +6,7 @@
 </head>
 <body>
 <form action="/reservation/new" method="post" id="reservationForm">
-    <input type="date" name="date" value="날짜 선택">
+    <input  id="date-picker" type="date" name="date" value="날짜 선택">
     <label for="from">시작 시간</label>
     <select id="from" name="startTime" form="reservationForm">
         <option value="00">00</option>
@@ -66,5 +66,13 @@
     <button type="submit">등록</button>
 
 </form>
+<script>
+    Date.prototype.toDateInputValue = function () {
+        let local = new Date(this);
+        local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+        return local.toJSON().slice(0,10);
+    }
+    document.getElementById("date-picker").value = new Date().toDateInputValue();
+</script>
 </body>
 </html>
