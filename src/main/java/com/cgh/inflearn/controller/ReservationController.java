@@ -56,8 +56,10 @@ public class ReservationController {
     }
 
     @GetMapping("/new")
-    public String viewForm() {
-
+    public String viewForm(@CookieValue(required = false) String memberId) {
+        if (memberId == null) {
+            return "redirect:/home/login";
+        }
         return "reservation-form";
     }
 
@@ -67,6 +69,7 @@ public class ReservationController {
         Reservation reservation = new Reservation(UUID.fromString(memberId),
                 dateTimeFormatter(dto.getDate(), dto.getStartTime()),
                 dateTimeFormatter(dto.getDate(), dto.getEndTime()));
+        reservation.setUserId(UUID.fromString(memberId));
         reservationService.save(reservation);
         return "redirect:/reservation/view-list";
     }
