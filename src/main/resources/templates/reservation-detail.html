@@ -5,40 +5,49 @@
     <title>Reservation</title>
 </head>
 <body>
+<button><a href="/reservation/new">예약 생성</a></button>
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <script>
-    var cookieValue = null;
-    if (document.cookie) {
-        var array = document.cookie.split((escape("reservationDate") + '='));
-        if (array.length >= 2) {
-            var arraySub = array[1].split(';');
-            cookieValue = unescape(arraySub[0]);
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie) {
+            var array = document.cookie.split((escape(name) + '='));
+            if (array.length >= 2) {
+                var arraySub = array[1].split(';');
+                cookieValue = unescape(arraySub[0]);
+            }
         }
+        return cookieValue;
     }
-    let resDate = cookieValue;
 </script>
 <script>
     $.ajax({
-        url: "/reservation/" + resDate,
+        url: "/reservation/" + getCookie("reservationDate"),
         type: 'GET',
         dateType: 'json',
         contentType: 'application/json',
         success: function (json) {
+            let container = document.createElement("ul");
             $.each(json, function (k, v) {
-                let container = document.createElement("div");
-                let data = document.createElement("p");
+                let data = document.createElement("li");
                 data.innerHTML = dataFormat(json[k]);
+                let deleteBtn = document.createElement("button");
+                deleteBtn.innerHTML = "delete";
+                deleteBtn.addEventListener('click', function () {
+                    $.ajax({
+                        url: "/reservation/" + json[k].reservationId,
+                        type: 'DELETE',
+                        contentType: 'application/json',
+                        success: function () {
+                            alert("삭제되었습니다.");
+                            document.location.reload();
+                        }
+                    });
+                })
+                data.append(deleteBtn);
+
                 container.append(data);
                 document.body.appendChild(container);
-
-                // let container = document.createElement("div")
-                // let username = document.createElement("user-name").innerHTML = json[k].userName;
-                // let date = document.createElement("res-date").innerHTML = json[k].date;
-                // let month = document.createElement("res-month").innerHTML = json[k].month;
-                // let start = document.createElement("res-start").innerHTML = json[k].startTime;
-                // let end = document.createElement("res-end").innerHTML = json[k].endTime;
-                // container.append(username, date, month, start, end);
-                // document.body.appendChild(container);
             });
         }
     });
@@ -50,10 +59,10 @@
         let startTime = json.startTime.split("T").at(1)
         let endTime = json.endTime.split("T").at(1)
 
-        output += json.userName + "\n";
-        output += date + "\n";
-        output += startTime + "\n";
-        output += endTime + "\n";
+        output += json.userName + ": ";
+        output += date + " <b>";
+        output += startTime + " - ";
+        output += endTime + "</b>";
 
         return output;
     }

@@ -84,6 +84,7 @@ public class ReservationController {
         for (Reservation reservation : reservations) {
             ViewReservationDto dto = new ViewReservationDto();
             String username = memberService.findById(reservation.getUserId()).getName();
+            dto.setReservationId(reservation.getId().toString());
             dto.setUserName(username);
             dto.setDate(reservation.getStartTime().toLocalDate().getDayOfMonth());
             dto.setMonth(reservation.getStartTime().getMonthValue());
@@ -129,10 +130,10 @@ public class ReservationController {
 //    }
 
     @DeleteMapping("/{reservationId}")
-    public String delete(@PathVariable String reservationId) {
-
+    public ResponseEntity<List<Reservation>> delete(@PathVariable String reservationId) {
         reservationService.delete(UUID.fromString(reservationId));
-        return "redirect:/reservation/list";
+        List<Reservation> reservationList = reservationService.findAllReservations();
+        return new ResponseEntity<>(reservationList, HttpStatus.OK);
     }
 
     private LocalDateTime dateTimeFormatter(String date, String time) {
